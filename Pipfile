@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "~=4.2"
+djangorestframework = "~=3.14"
+djangorestframework-simplejwt = "~=5.2"
+gunicorn = "~=21.2"
+celery = {version = "==5.3.1", extras = ["redis"]}
+
+[dev-packages]
+requests = "*"
+flake8 = "*"
+black = "*"
+isort = "*"
+django-stubs = "*"
+djangorestframework-stubs = "*"
+drf-yasg = "*"
+
+[requires]
+python_version = "3.11"
