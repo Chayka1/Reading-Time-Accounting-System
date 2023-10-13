@@ -1,11 +1,11 @@
 import os
 from datetime import timedelta
-from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = (
-    "django-insecure-s=9n3b#d+aikz9oo=vno06t@3r$i-!ybxm#f=w-^#cbak(j)7-"  # noqa
+SECRET_KEY = os.getenv(
+    "django-insecure-s=9n3b#d+aikz9oo=vno06t@3r$i-!ybxm#f=w-^#cbak(j)7-",
+    default="invalid",
 )
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
@@ -38,12 +38,10 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
 
 ROOT_URLCONF = "config.urls"
 
@@ -69,10 +67,9 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -89,17 +86,22 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
 
 USE_I18N = True
 
+USE_L10N = True
+
 USE_TZ = True
 
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+
+
+AUTH_USER_MODEL = "users.User"
+
 
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
@@ -116,6 +118,12 @@ REST_FRAMEWORK = {
     ),  # noqa
 }
 
+if DEBUG is True:
+    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"].append(
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    )
+
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(
         seconds=int(os.getenv("JWT_ACCESS_TOKEN_LIFETIME", default=100))
@@ -125,4 +133,12 @@ SIMPLE_JWT = {
 }
 
 
+CELERY_BROKER_URL = os.getenv(
+    "CELERY_BROKER_URL", default="redis://broker:6379/0"
+)  # noqa
+
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
