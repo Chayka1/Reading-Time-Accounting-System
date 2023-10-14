@@ -6,12 +6,12 @@ from books.task import calculate_and_save_reading_statistics
 
 @pytest.mark.django_db(transaction=True)
 def test_calculate_and_save_reading_statistics_task():
-    # Отримуємо user_id для тестування
+    # Get the user_id for testing
     user_id = 1
 
-    # Викликаємо завдання Celery
+    # Calling up the Celery task
     task_result = calculate_and_save_reading_statistics.apply(args=(user_id,))
 
-    # Перевірка, що завдання було успішно відправлено
+    # Verify that the task was sent successfully
     assert isinstance(task_result, AsyncResult)
     assert task_result.successful()
