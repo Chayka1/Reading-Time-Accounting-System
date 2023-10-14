@@ -19,3 +19,7 @@ python src/manage.py runserver
 pipenv shell
 celery -A config worker --loglevel=info
 ```
+
+## Swagger documentation:
+
+http://localhost:8000/docs/
