@@ -10,6 +10,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=100, null=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    total_reading_time_7_days = models.FloatField(default=0.0)
+    total_reading_time_30_days = models.FloatField(default=0.0)
 
     objects = UserManager()
 
