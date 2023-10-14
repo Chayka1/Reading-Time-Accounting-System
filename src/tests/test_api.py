@@ -20,12 +20,7 @@ User = get_user_model()
 
 
 class BookAPITestCase(APITestCase):
-    def setUp(self):
-        self.book = Book.objects.create(
-            title="Тестовая книга",
-            author="Тестовый автор",
-        )
-
+    # Get a book list
     def test_get_book_list(self):
         url = reverse("books")
         response = self.client.get(url)
@@ -34,6 +29,7 @@ class BookAPITestCase(APITestCase):
         serialized_data = BookSerializer(self.book).data
         self.assertEqual(response.data[0], serialized_data)
 
+    # Book creation
     def test_create_book(self):
         url = reverse("books")
         data = {
@@ -49,6 +45,7 @@ class BookAPITestCase(APITestCase):
 
 
 class UserAPITestCase(APITestCase):
+    # User creations
     def test_create_user(self):
         url = reverse("users")
 

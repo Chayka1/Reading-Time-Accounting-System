@@ -17,6 +17,8 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
 
+    # Creates a new book instance based on the provided data in the request.
+    # Also triggers a background task to calculate and save reading statistics.
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
@@ -25,16 +27,19 @@ class BookViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # Retrieves details of a specific book based on its primary key (pk).
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
+    # Retrieves a list of books.
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serializer = BookSerializerListResponse(queryset, many=True)
         return Response(serializer.data)
 
+    # Marks the start of a reading session for a specific book (pk).
     @action(detail=True, methods=["post"])
     def start_reading(self, request, pk=None):
         book = self.get_object()
@@ -52,6 +57,7 @@ class BookViewSet(viewsets.ModelViewSet):
         serializer = ReadingSessionSerializer(new_session)
         return Response(serializer.data)
 
+    # Marks the end of an ongoing reading session for a specific book (pk).
     @action(detail=True, methods=["post"])
     def end_reading(self, request, pk=None):
         session = ReadingSession.objects.filter(
@@ -67,6 +73,7 @@ class BookViewSet(viewsets.ModelViewSet):
                 status=404, data={"message": "No active reading session for this book."} # noqa
             )
 
+    # Calculates the total reading time for each book and returns the data.
     @action(detail=False, methods=["get"])
     def total_reading_time_per_book(self, request):
         books = self.get_queryset()
@@ -84,6 +91,8 @@ class BookViewSet(viewsets.ModelViewSet):
 
         return Response(data)
 
+    # Provides statistics about the user's reading activity,
+    # including the total number of books read and the overall reading time.
     @action(detail=False, methods=["get"])
     def user_statistics(self, request, *args, **kwargs):
         user = request.user
