@@ -8,8 +8,8 @@ from books.models import Book, ReadingSession
 # fmt: off
 from books.serializers import (BookSerializer, BookSerializerListResponse,
                                ReadingSessionSerializer)
-
 # fmt: off
+from books.task import calculate_and_save_reading_statistics
 
 
 class BookViewSet(viewsets.ModelViewSet):
@@ -21,6 +21,7 @@ class BookViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            calculate_and_save_reading_statistics.apply_async(args=[request.user.id], countdown=5) # noqa
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
