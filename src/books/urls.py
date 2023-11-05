@@ -11,7 +11,11 @@ router.register(
     BookViewSet,
     basename="total_reading_time_per_book",
 )
-router.register(r"user_statistics", BookViewSet, basename="user_statistics")
+router.register(
+    r"user_statistics",
+    BookViewSet,
+    basename="user_statistics",
+)
 
 urlpatterns = [
     path("", include(router.urls)),
