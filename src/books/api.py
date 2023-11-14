@@ -35,8 +35,7 @@ class BookViewSet(viewsets.ModelViewSet):
 
     # Retrieves a list of books.
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = BookSerializerListResponse(queryset, many=True)
+        serializer = BookSerializerListResponse(self.queryset, many=True)
         return Response(serializer.data)
 
     # Marks the start of a reading session for a specific book (pk).
