@@ -11,5 +11,6 @@ urlpatterns = [
             method="post",
             responses={201: LoginResponseSerializer},
         )(TokenObtainPairView.as_view()),
+        name="token",
     ),
 ]
