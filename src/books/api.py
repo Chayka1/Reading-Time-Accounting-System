@@ -27,12 +27,6 @@ class BookViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # Retrieves details of a specific book based on its primary key (pk).
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
-
     # Retrieves a list of books.
     def list(self, request, *args, **kwargs):
         serializer = BookSerializerListResponse(self.queryset, many=True)
