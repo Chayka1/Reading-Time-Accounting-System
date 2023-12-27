@@ -3,5 +3,5 @@ from django.urls import path
 from users.api import UserCreateAPIView
 
 urlpatterns = [
-    path("", UserCreateAPIView.as_view()),
+    path("", UserCreateAPIView.as_view(), name="user-create"),
 ]
