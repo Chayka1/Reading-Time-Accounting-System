@@ -1,0 +1,60 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Авторизація</title>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Авторизація</h2>
+        <form id="loginForm">
+            <label for="email">Електронна пошта:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="button" onclick="loginUser()">Увійти</button>
+        </form>
+        <p>Ще не маєте облікового запису? <a href="{% url 'reg' %}">Зареєструватися</a></p>
+    </div>
+
+    <script>
+        function loginUser() {
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+
+            var data = {
+                "email": email,
+                "password": password
+            };
+
+            var xhr = new XMLHttpRequest();
+            var url = "{% url 'token' %}";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        alert("Авторизація пройшла успішно!\nAccess Token: " + response.access);
+                    } else {
+                        alert("Помилка авторизації. Спробуйте ще раз.");
+                    }
+                }
+            };
+
+            var jsonData = JSON.stringify(data);
+            xhr.send(jsonData);
+        }
+    </script>
+</body>
+
+</html>

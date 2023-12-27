@@ -1,0 +1,72 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Реєстрація</title>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Реєстрація</h2>
+        <form id="registrationForm">
+            <label for="email">Електронна пошта:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="button" onclick="registerUser()">Зареєструватися</button>
+        </form>
+    </div>
+
+    <script>
+        function registerUser() {
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+
+            var data = {
+                "email": email,
+                "password": password
+            };
+
+            var xhr = new XMLHttpRequest();
+            var url = "{% url 'user-create' %}";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 201) {
+                        console.log(xhr.responseText);
+                        window.location.href = "/";
+                    } 
+                    else if (xhr.status === 400) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            var errorMessage = response && response.email ? response.email[0] : "Невідома помилка";
+                            if (errorMessage == 'Enter a valid email address.') {
+                                alert("Email введено невірно!");
+                            }
+                            else if (errorMessage == 'user with this email already exists.'){
+                                alert("Такий користувач вже існує");
+                            }
+                        } catch (e) {
+                            console.error("Помилка при обробці відповіді сервера:", e);
+                            alert("Невідома помилка");
+                        }
+                    }
+                }
+            };
+
+            var jsonData = JSON.stringify(data);
+            xhr.send(jsonData);
+        }
+    </script>
+</body>
+
+</html>
