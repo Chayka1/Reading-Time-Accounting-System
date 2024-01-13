@@ -3,3 +3,4 @@ __pycache__/
 *.sqlite*
 trash.py
 dump.rdb
+.DS_Store
