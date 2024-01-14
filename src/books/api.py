@@ -1,3 +1,4 @@
+from django.core.files.base import ContentFile
 from django.utils import timezone
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -20,16 +21,23 @@ class BookViewSet(viewsets.ModelViewSet):
     # Creates a new book instance based on the provided data in the request.
     # Also triggers a background task to calculate and save reading statistics.
     def create(self, request, *args, **kwargs):
+        pdf_file = request.data.get('pdf_file')
+        request.data.pop('pdf_file', None)
+
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            book_instance = serializer.save()
+
+            if pdf_file:
+                book_instance.pdf_file.save(pdf_file.name, ContentFile(pdf_file.read())) # noqa
+
             calculate_and_save_reading_statistics.apply_async(args=[request.user.id], countdown=5) # noqa
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # Retrieves a list of books.
     def list(self, request, *args, **kwargs):
-        serializer = BookSerializerListResponse(self.queryset, many=True)
+        queryset = self.get_queryset()
+        serializer = BookSerializerListResponse(queryset, many=True)
         return Response(serializer.data)
 
     # Marks the start of a reading session for a specific book (pk).

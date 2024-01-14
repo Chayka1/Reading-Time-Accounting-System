@@ -13,6 +13,7 @@ class BookSerializer(serializers.ModelSerializer):
             "publication_year",
             "short_description",
             "full_description",
+            "pdf_file",
         ]
 
 
