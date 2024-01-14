@@ -9,6 +9,7 @@ class Book(models.Model):
     publication_year = models.IntegerField()
     short_description = models.TextField()
     full_description = models.TextField()
+    pdf_file = models.FileField(upload_to="pdf_books/", null=True, blank=True)
     total_reading_time = models.IntegerField(null=True)
 
     # A method that counts the total reading time of a book,

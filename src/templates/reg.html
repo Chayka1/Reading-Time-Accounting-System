@@ -44,6 +44,7 @@
                 if (xhr.readyState === 4) {
                     if (xhr.status === 201) {
                         console.log(xhr.responseText);
+                        alert("Регестрація пройшла успішно!");
                         window.location.href = "/";
                     } 
                     else if (xhr.status === 400) {
