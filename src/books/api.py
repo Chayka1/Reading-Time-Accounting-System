@@ -21,6 +21,11 @@ class BookViewSet(viewsets.ModelViewSet):
     # Creates a new book instance based on the provided data in the request.
     # Also triggers a background task to calculate and save reading statistics.
     def create(self, request, *args, **kwargs):
+        if request.user.is_staff != True:
+            return Response(
+                "You are not allowed to add a book",
+                status=status.HTTP_403_FORBIDDEN,
+            )
         pdf_file = request.data.get('pdf_file')
         request.data.pop('pdf_file', None)
 
